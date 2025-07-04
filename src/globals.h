@@ -4,6 +4,8 @@
 
 namespace wing_ding::globals {
 	const std::string g_window_name = "Wing Ding";
+	constexpr int g_window_width = 720;
+	constexpr int g_window_height = 1280;
 
 	const std::string g_vertex_source = R"(
 #version 330 core
@@ -18,7 +20,6 @@ void main()
     ourColor = aColor;
 }
 )";
-
 	const std::string g_fragment_source = R"(
 #version 330 core
 out vec4 FragColor;
