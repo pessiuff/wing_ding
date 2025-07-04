@@ -2,5 +2,31 @@
 
 project ("wing_ding")
 
-add_executable (wing_ding "src/wing_ding.cpp" "src/wing_ding.h")
-set_property(TARGET wing_ding PROPERTY CXX_STANDARD 23)
+add_subdirectory ("vendor")
+
+file (GLOB SOURCE_FILES
+    "vendor/imgui/*.h"
+    "vendor/imgui/*.cpp"
+    "vendor/imgui/backends/imgui_impl_glfw.h"
+    "vendor/imgui/backends/imgui_impl_glfw.cpp"
+    "vendor/imgui/backends/imgui_impl_opengl3.h"
+    "vendor/imgui/backends/imgui_impl_opengl3_loader.h"
+    "vendor/imgui/backends/imgui_impl_opengl3.cpp"
+    "src/*.h"
+    "src/*/*.h"
+    "src/*/*/*.h"
+    "src/*.cpp"
+    "src/*/*.cpp"
+    "src/*/*/*.cpp"
+)
+
+if(WIN32 AND NO_CONSOLE)
+    add_executable(${CMAKE_PROJECT_NAME} WIN32 ${SOURCE_FILES})
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE NO_CONSOLE_WINDOW)
+else()
+    add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})
+endif()
+set_property (TARGET ${CMAKE_PROJECT_NAME} PROPERTY CXX_STANDARD 23)
+
+target_include_directories (${CMAKE_PROJECT_NAME} PRIVATE "vendor/glfw/include/" "vendor/glad-cmake/include" "vendor/glm/glm/" "vendor/imgui/")
+target_link_libraries (${CMAKE_PROJECT_NAME} PRIVATE "glfw" "glad")
