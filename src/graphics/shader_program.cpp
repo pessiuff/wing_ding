@@ -1,5 +1,6 @@
 #include "shader_program.h"
 
+#include <print>
 #include <vector>
 
 namespace wing_ding {
@@ -15,35 +16,42 @@ namespace wing_ding {
 		}
 	}
 
-	shader_attach_status shader_program::attach_shader(GLint shader_type, const std::string& source, std::string& info_log) {
+	void shader_program::attach_shader(GLint shader_type, const std::string& source) {
 		// Make sure the shader program exists.
-		if (m_program_handle == 0)
-			return shader_attach_status::invalid_program;
+		if (m_program_handle == 0) {
+			std::println("[shader_program::attach_shader] [error] Program handle was `0` while trying to execute the function.");
+			return;
+		}
 
 		// Try creating a shader.
 		GLuint shader_handle = glCreateShader(shader_type);
-		if (shader_handle == 0)
-			return shader_attach_status::invalid_shader;
+		if (shader_handle == 0) {
+			std::println("[shader_program::attach_shader] [error] Shader creation has failed.");
+			return;
+		}
 
 		// Check shader type to see if the same time has already been attached before.
 		switch (shader_type) {
 		case GL_VERTEX_SHADER:
 			if (m_vertex_handle != 0) {
 				glDeleteShader(shader_handle);
-				return shader_attach_status::already_attached;
+				std::println("[shader_program::attach_shader] [error] Tried attaching an already existing shader type (GL_VERTEX_SHADER).");
+				return;
 			}
 
 			break;
 		case GL_FRAGMENT_SHADER:
 			if (m_fragment_handle != 0) {
 				glDeleteShader(shader_handle);
-				return shader_attach_status::already_attached;
+				std::println("[shader_program::attach_shader] [error] Tried attaching an already existing shader type (GL_FRAGMENT_SHADER).");
+				return;
 			}
 
 			break;
 		default:
 			glDeleteShader(shader_handle);
-			return shader_attach_status::unsupported_shader;
+			std::println("[shader_program::attach_shader] [error] Tried attaching an invalid/unsupported shader type.");
+			return;
 		}
 
 		// Set the shader source.
@@ -60,15 +68,14 @@ namespace wing_ding {
 			if (info_log_length > 0) {
 				std::vector<char> info_log_buffer(info_log_length);
 				glGetShaderInfoLog(shader_handle, info_log_length, nullptr, info_log_buffer.data());
-				info_log = info_log_buffer.data();
+				std::println("[shader_program::attach_shader] [error] Error while compiling shader: [\n{}]", info_log_buffer.data());
 			}
 			else {
-				info_log = "Unknown compilation error.";
+				std::println("[shader_program::attach_shader] [error] Unknown shader compilation error.");
 			}
 
 			glDeleteShader(shader_handle);
-
-			return shader_attach_status::compile_failure;
+			return;
 		}
 
 		// Set corresponding shader handles.
@@ -79,14 +86,14 @@ namespace wing_ding {
 
 		// Finally, attach the shader to the program.
 		glAttachShader(m_program_handle, shader_handle);
-
-		return shader_attach_status::success;
 	}
 
-	program_link_status shader_program::link_program(std::string& info_log) {
+	void shader_program::link_program() {
 		// Make sure the shader program exists.
-		if (m_program_handle == 0)
-			return program_link_status::invalid_program;
+		if (m_program_handle == 0) {
+			std::println("[shader_program::link_program] [error] Program handle was `0` while trying to execute the function.");
+			return;
+		}
 
 		// Try linking and check for errors.
 		glLinkProgram(m_program_handle);
@@ -98,16 +105,15 @@ namespace wing_ding {
 			if (info_log_length > 0) {
 				std::vector<char> info_log_buffer(info_log_length);
 				glGetProgramInfoLog(m_program_handle, info_log_length, nullptr, info_log_buffer.data());
-				info_log = info_log_buffer.data();
+				std::println("[shader_program::link_program] [error] Error while linking program: [\n{}]", info_log_buffer.data());
 			}
 			else {
-				info_log = "Unknown linking error.";
+				std::println("[shader_program::link_program] [error] Unknown linking error.");
 			}
 
 			glDeleteProgram(m_program_handle);
 			m_program_handle = 0;
-
-			return program_link_status::link_failure;
+			return;
 		}
 
 		// Finally, detach & delete shaders after successfully linking to free memory.
@@ -122,8 +128,10 @@ namespace wing_ding {
 			glDeleteShader(m_fragment_handle);
 			m_fragment_handle = 0;
 		}
+	}
 
-		return program_link_status::success;
+	void shader_program::use() {
+		glUseProgram(m_program_handle);
 	}
 
 	GLint shader_program::get_uniform_location(const std::string& name) {
@@ -131,9 +139,5 @@ namespace wing_ding {
 			return -1;
 
 		return glGetUniformLocation(m_program_handle, name.c_str());
-	}
-
-	void shader_program::use() {
-		glUseProgram(m_program_handle);
 	}
 }

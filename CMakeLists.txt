@@ -21,5 +21,5 @@ else()
 endif()
 set_property (TARGET ${CMAKE_PROJECT_NAME} PROPERTY CXX_STANDARD 23)
 
-target_include_directories (${CMAKE_PROJECT_NAME} PRIVATE "vendor/glfw/include/" "vendor/glad-cmake/include" "vendor/glm/glm/")
+target_include_directories (${CMAKE_PROJECT_NAME} PRIVATE "vendor/glfw/include/" "vendor/glad-cmake/include/" "vendor/glm/glm/" "vendor/stb/")
 target_link_libraries (${CMAKE_PROJECT_NAME} PRIVATE "glfw" "glad")
