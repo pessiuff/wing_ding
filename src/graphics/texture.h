@@ -11,6 +11,9 @@ namespace wing_ding {
 
 		void bind();
 
+		[[nodiscard]] int get_image_width();
+		[[nodiscard]] int get_image_height();
+
 	private:
 		int m_image_width = 0, m_image_height = 0;
 		GLuint m_texture_handle = 0;

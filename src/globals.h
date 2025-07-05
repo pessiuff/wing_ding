@@ -4,31 +4,34 @@
 
 namespace wing_ding::globals {
 	const std::string g_window_name = "Wing Ding";
-	constexpr int g_window_width = 720;
-	constexpr int g_window_height = 1280;
+	constexpr unsigned int g_window_width = 720;
+	constexpr unsigned int g_window_height = 1280;
 
 	const std::string g_vertex_source = R"(
 #version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec3 aColor;
+layout (location = 0) in vec2 aPos;
+layout (location = 1) in vec2 aTexCoord;
 
-out vec3 ourColor;
+out vec2 TexCoord;
 
 void main()
 {
-    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-    ourColor = aColor;
+    gl_Position = vec4(aPos, 0.0, 1.0);
+    TexCoord = aTexCoord;
 }
 )";
+
 	const std::string g_fragment_source = R"(
 #version 330 core
 out vec4 FragColor;
 
-in vec3 ourColor;
+in vec2 TexCoord;
+uniform sampler2D textureSampler;
 
 void main()
 {
-	FragColor = vec4(ourColor, 1.0);
+    FragColor = texture(textureSampler, TexCoord);
 }
 )";
+	constexpr unsigned int g_max_batch_quads = 1024;
 }

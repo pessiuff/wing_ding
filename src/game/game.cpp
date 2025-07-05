@@ -36,6 +36,8 @@ namespace wing_ding {
 		// Setup one time OpenGL settings.
 		glViewport(0, 0, globals::g_window_width, globals::g_window_height);
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		while (!glfwWindowShouldClose(m_window)) {
 			// Process pending events.

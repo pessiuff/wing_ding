@@ -16,6 +16,7 @@ namespace wing_ding {
 		void use();
 
 		GLint get_uniform_location(const std::string& name);
+		void set_uniform1i(const std::string& name, GLint value);
 
 	private:
 		GLuint m_program_handle = 0;

@@ -140,4 +140,12 @@ namespace wing_ding {
 
 		return glGetUniformLocation(m_program_handle, name.c_str());
 	}
+
+	void shader_program::set_uniform1i(const std::string& name, GLint value) {
+		GLint location = get_uniform_location(name);
+		if (location == -1)
+			return;
+
+		glUniform1i(location, value);
+	}
 }

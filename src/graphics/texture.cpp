@@ -46,4 +46,12 @@ namespace wing_ding {
 	void texture::bind() {
 		glBindTexture(GL_TEXTURE_2D, m_texture_handle);
 	}
+
+	int texture::get_image_width() {
+		return m_image_width;
+	}
+
+	int texture::get_image_height() {
+		return m_image_height;
+	}
 }
